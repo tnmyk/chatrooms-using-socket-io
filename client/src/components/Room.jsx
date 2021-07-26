@@ -30,18 +30,18 @@ const Room = ({socket}) => {
     setMsgInput("");
   };
   useEffect(() => {
-    
-    socket.emit("joinRoom",{room: room,username:username});
+    socket.emit("joinRoom", { room: room, username: username });
     socket.on("number", (number) => {
       setOnline(number);
     });
     socket.on("newMessage", (newMessage) => {
-      new Audio(audio).play().catch(err=>{});
+      new Audio(audio).play().catch((err) => {});
       setMsgs((prev) => [...prev, newMessage]);
     });
     return () => {
       socket.emit("unsub", { room: room, username: username });
     };
+    // eslint-disable-next-line
   }, [room]);
   return (
     <Box p="1rem" h="100vh" position="relative">
