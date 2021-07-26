@@ -1,5 +1,5 @@
 const UsersChange = ({ msgData }) => {
-  console.log(msgData)
+  
     const message =
     msgData.action === "joined"
       ? `${msgData.username} just joined the chat`

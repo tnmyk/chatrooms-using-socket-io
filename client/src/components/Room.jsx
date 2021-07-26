@@ -2,20 +2,20 @@ import { Box, Flex, IconButton, Input, Tag, Text } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { AiOutlineSend } from "react-icons/ai";
 import { useParams } from "react-router-dom";
-import io from "socket.io-client";
+
 import { UserContext } from "../contexts/UserContext";
 import Message from "./Message";
 import UsersChange from "./UsersChange";
-const socket = io.connect("http://localhost:8000/");
+import audio from "../assets/notification.mp3";
 
-const Room = () => {
+const Room = ({socket}) => {
   const [msgInput, setMsgInput] = useState("");
   const [online, setOnline] = useState(0);
   const [msgs, setMsgs] = useState([]);
-  const noti = new Audio('/notification.mp3')
+
   const { room } = useParams();
   const { user: username } = useContext(UserContext);
-  const time = "69:69:69";
+ 
   const sendMsg = () => {
     
     socket.emit("message", {
@@ -24,7 +24,7 @@ const Room = () => {
         type: "text",
         message: msgInput,
         username: username,
-        time: time,
+        time: new Date().toLocaleString(),
       },
     });
     setMsgInput("");
@@ -36,7 +36,7 @@ const Room = () => {
       setOnline(number);
     });
     socket.on("newMessage", (newMessage) => {
-      new Audio("/notification.mp3").play();
+      new Audio(audio).play().catch(err=>{});
       setMsgs((prev) => [...prev, newMessage]);
     });
     return () => {
@@ -45,7 +45,6 @@ const Room = () => {
   }, [room]);
   return (
     <Box p="1rem" h="100vh" position="relative">
-      {/* <Heading size="sm" textTransform="capitalize"></Heading> */}
       <Flex alignItems="center">
         <Text fontSize="0.9rem">Current room: </Text>{" "}
         <Text

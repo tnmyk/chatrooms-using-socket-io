@@ -1,8 +1,8 @@
-import { Button, Flex, Heading, IconButton, Input, Text } from "@chakra-ui/react";
+import { Flex, Heading, IconButton, Input, Text } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
+import { BsArrowRight } from 'react-icons/bs';
 import { Link } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
-import {BsArrowRight} from 'react-icons/bs'
 const HomePage = () => {
   const { user, setUser } = useContext(UserContext);
   const [inputUsername, setInputUsername] = useState("");
@@ -44,10 +44,6 @@ const HomePage = () => {
           />
         </Link>
       </Flex>
-
-      {/* <Link to="rooms/public">
-        <Button>Join Public</Button>
-      </Link> */}
     </Flex>
   );
 };
