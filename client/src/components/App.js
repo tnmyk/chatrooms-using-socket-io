@@ -10,7 +10,7 @@ import io from "socket.io-client";
 const socket = io.connect("https://roomchatserver.herokuapp.com/");
 const App = () => {
   
-  const [user, setUser] = useState("tnasadasd");
+  const [user, setUser] = useState("");
   useEffect(()=>{
     const localUsername = localStorage.getItem('username');
     if (localUsername) setUser(localUsername)
