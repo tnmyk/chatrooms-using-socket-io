@@ -7,7 +7,7 @@ import HomePage from "./HomePage";
 import Room from "./Room";
 import Join from "./Join";
 import io from "socket.io-client";
-const socket = io.connect("http://localhost:8000/");
+const socket = io.connect("https://roomchatserver.herokuapp.com/");
 const App = () => {
   
   const [user, setUser] = useState("tnasadasd");
