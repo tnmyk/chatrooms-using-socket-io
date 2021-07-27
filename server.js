@@ -35,12 +35,12 @@ io.on("connection", (socket) => {
     if (!io.sockets.adapter.rooms.get(room)) return;
 
     const clientsInRoom = io.sockets.adapter.rooms.get(room).size;
-    io.to(room).emit("number", clientsInRoom);
-    io.to(room).emit("newMessage", { type: "left", username: username });
     socket.leave(room);
     rooms[room] = clientsInRoom - 1;
     if (rooms[room] <= 0) delete rooms[room];
     io.emit("rooms", rooms);
+    io.to(room).emit("number", clientsInRoom);
+    io.to(room).emit("newMessage", { type: "left", username: username });
   });
   socket.on("disconnecting", () => {
     socket.rooms.forEach(async (room) => {
@@ -49,13 +49,11 @@ io.on("connection", (socket) => {
       rooms[room] = clientsInRoom;
       if (rooms[room] <= 0) delete rooms[room];
       io.emit("rooms", rooms);
-      await io
-        .to(room)
-        .emit("newMessage", {
-          type: "userschange",
-          action: "left",
-          username: users[socket.id],
-        });
+      await io.to(room).emit("newMessage", {
+        type: "userschange",
+        action: "left",
+        username: users[socket.id],
+      });
     });
     delete users[socket.id];
   });
