@@ -10,6 +10,7 @@ const Message = ({ username, time, message }) => {
         maxWidth: "80%",
         background: "black",
         borderRadius: "15px",
+        flexShrink:0
       }}
     >
       <h1 style={{ fontSize: "0.9rem", fontWeight: "500" }}>

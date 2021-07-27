@@ -32,8 +32,9 @@ io.on("connection", (socket) => {
     io.to(room).emit("newMessage", messageData);
   });
   socket.on("unsub", ({ room, username }) => {
-    socket.leave(room);
+    
     if (!io.sockets.adapter.rooms.get(room)) return;
+    socket.leave(room);
     const clientsInRoom = io.sockets.adapter.rooms.get(room).size;
     io.to(room).emit("number", clientsInRoom);
     io.to(room).emit("newMessage", { type: "left", username: username });
