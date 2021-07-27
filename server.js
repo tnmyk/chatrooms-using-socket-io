@@ -8,7 +8,7 @@ const io = require("socket.io")(server, {
 });
 server.listen(port);
 const users = {};
-const rooms={}
+const rooms = {};
 io.on("connection", (socket) => {
   io.emit("rooms", rooms);
   socket.on("joinRoom", ({ room, username }) => {
@@ -20,7 +20,7 @@ io.on("connection", (socket) => {
     const clientsInRoom = io.sockets.adapter.rooms.get(room).size;
     io.to(room).emit("number", clientsInRoom);
     rooms[room] = clientsInRoom;
-    io.emit('rooms',rooms)
+    io.emit("rooms", rooms);
     io.to(room).emit("newMessage", {
       type: "userschange",
       action: "joined",
@@ -32,13 +32,13 @@ io.on("connection", (socket) => {
     io.to(room).emit("newMessage", messageData);
   });
   socket.on("unsub", ({ room, username }) => {
-    
     if (!io.sockets.adapter.rooms.get(room)) return;
-    socket.leave(room);
+
     const clientsInRoom = io.sockets.adapter.rooms.get(room).size;
     io.to(room).emit("number", clientsInRoom);
     io.to(room).emit("newMessage", { type: "left", username: username });
-    rooms[room] = clientsInRoom-1;
+    socket.leave(room);
+    rooms[room] = clientsInRoom - 1;
     if (rooms[room] <= 0) delete rooms[room];
     io.emit("rooms", rooms);
   });
@@ -47,11 +47,15 @@ io.on("connection", (socket) => {
       const clientsInRoom = io.sockets.adapter.rooms.get(room).size - 1;
       io.to(room).emit("number", clientsInRoom);
       rooms[room] = clientsInRoom;
-      if(rooms[room]<=0) delete rooms[room]
+      if (rooms[room] <= 0) delete rooms[room];
       io.emit("rooms", rooms);
       await io
         .to(room)
-        .emit("newMessage", { type: "userschange",action:'left' ,username: users[socket.id] });
+        .emit("newMessage", {
+          type: "userschange",
+          action: "left",
+          username: users[socket.id],
+        });
     });
     delete users[socket.id];
   });
