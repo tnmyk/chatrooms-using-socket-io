@@ -34,7 +34,7 @@ io.on("connection", (socket) => {
   socket.on("unsub", ({ room, username }) => {
     if (!io.sockets.adapter.rooms.get(room)) return;
 
-    const clientsInRoom = io.sockets.adapter.rooms.get(room).size;
+    const clientsInRoom = io.sockets.adapter.rooms.get(room).size-1;
     socket.leave(room);
     rooms[room] = clientsInRoom - 1;
     if (rooms[room] <= 0) delete rooms[room];
