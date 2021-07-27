@@ -36,7 +36,7 @@ io.on("connection", (socket) => {
 
     const clientsInRoom = io.sockets.adapter.rooms.get(room).size-1;
     socket.leave(room);
-    rooms[room] = clientsInRoom - 1;
+    rooms[room] = clientsInRoom;
     if (rooms[room] <= 0) delete rooms[room];
     io.emit("rooms", rooms);
     io.to(room).emit("number", clientsInRoom);
