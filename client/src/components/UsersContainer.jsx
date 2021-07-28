@@ -1,50 +1,69 @@
-import { Heading, VStack, Flex } from "@chakra-ui/react";
+import { Heading, Flex, Box } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
 const UsersContainer = ({ socket }) => {
   const [users, setUsers] = useState([]);
   useEffect(() => {
     socket.on("usersInRoom", (usersInRoom) => {
-      console.log(usersInRoom);
-      setUsers(usersInRoom)
+      setUsers(usersInRoom);
     });
   }, [socket]);
 
   return (
-    <VStack
-      w="8rem"
-      backgroundColor='gray.700'
-      // background="gray.900"
+    // <VStack
+    //   w="12rem"
+    //   borderLeft="1px solid #282b38"
+    //   overflow="auto"
+    //   h="100%"
+    //   spacing="0.5rem"
+    // >
+    <Flex
+      w="12rem"
+      flexDir="column"
+      background="gray.900"
       overflow="auto"
-      h='calc(100%)'
-      spacing="0.5rem"
+      borderLeft="1px solid #282b38"
+      h="100%"
+      alignItems="center"
     >
       {" "}
-      <Heading fontSize="1.3rem" my="1rem" mt="3rem">
-        Users
+      <Heading
+        mb="1.2rem"
+        color="#BDBDBD"
+        fontWeight="400"
+        fontSize="0.83rem"
+        mt="1.5rem"
+      >
+        <Flex alignItems='center'>
+          <span>Active</span>
+          <span
+            style={{
+              marginLeft:'0.3rem',
+              display: "inline-flex",
+              width: "0.5rem",
+              height: "0.5rem",
+              borderRadius: "50%",
+              backgroundColor: "#4ACA73",
+            }}
+          ></span>
+        </Flex>
       </Heading>
-      {users.map((user) => {
+      <Box w="100%" px="1rem">
+        {users.map((user) => {
           return (
-            <Flex alignItems="center" key={Math.random()}>
+            <Flex
+              fontSize="0.93rem"
+              mb="0.5rem"
+              alignItems="center"
+              key={Math.random()}
+            >
               {user}
-              {/* <span
-                style={{
-                  backgroundColor: "teal",
-                  marginLeft: "0.5rem",
-                  padding: "0.1rem 0.3rem",
-                  borderRadius: "5px",
-                  fontSize: "0.7rem",
-                  display: "flex",
-                  alignItems: "center",
-                  height: "max-content",
-                }}
-              >
-                {room.number}
-              </span> */}
             </Flex>
           );
-        })}
-    </VStack>
+        })}{" "}
+      </Box>
+    </Flex>
+    // </VStack>
   );
 };
 
