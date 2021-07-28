@@ -49,43 +49,49 @@ const RoomsContainer = ({ socket }) => {
         Rooms
       </Heading>
       <Box w="100%" px="1rem">
-        {roomsList.length===0 && <Box mt='1rem' mx='auto'
-          style={{
-            fontSize: "0.65rem",
-            textTransform: "capitalize",
-            width:'max-content',
-            maxWidth: "6.5rem",
-            whiteSpace: "nowrap",
-            color:"#BDBDBD" 
-            
-          }}
-        >
-          no room active yet
-        </Box>}
+        {roomsList.length === 0 && (
+          <Box
+            mt="1rem"
+            mx="auto"
+            style={{
+              fontSize: "0.65rem",
+              textTransform: "capitalize",
+              width: "max-content",
+              maxWidth: "6.5rem",
+              whiteSpace: "nowrap",
+              color: "#BDBDBD",
+            }}
+          >
+            no room active yet
+          </Box>
+        )}
         {roomsList.map((room) => {
           return (
-            <Flex
-              mt="1rem"
-              justifyContent="space-between"
-              alignItems="center"
-              key={Math.random()}
-            >
-              <Box
-                style={{
-                  fontSize: "0.9rem",
-                  textTransform: "capitalize",
-                  maxWidth: "5.5rem",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
+            <Link to={'/rooms/'+room.name}>
+              <Flex
+                mt="1rem"
+                justifyContent="space-between"
+                alignItems="center"
+                key={Math.random()}
               >
-                {room.name}
-              </Box>
-              <Flex style={{ fontSize: "0.70rem" }}>
-                <MdPersonOutline style={{ fontSize: "0.9rem" }} /> {room.number}
+                <Box
+                  style={{
+                    fontSize: "0.9rem",
+                    textTransform: "capitalize",
+                    maxWidth: "5.5rem",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {room.name}
+                </Box>
+                <Flex style={{ fontSize: "0.70rem" }}>
+                  <MdPersonOutline style={{ fontSize: "0.9rem" }} />{" "}
+                  {room.number}
+                </Flex>
               </Flex>
-            </Flex>
+            </Link>
           );
         })}
       </Box>

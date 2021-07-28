@@ -38,6 +38,9 @@ const HomePage = () => {
           onChange={(e) => {
             setInputUsername(e.target.value);
           }}
+          onKeyDown={(e)=>{
+            if(e.key==='Enter') setUsername()
+          }}
         ></Input>
 
         <IconButton
