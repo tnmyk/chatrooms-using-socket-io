@@ -1,23 +1,32 @@
-import { Box, Flex, IconButton, Input, InputGroup, InputRightAddon, Tag, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  IconButton,
+  Input,
+  InputGroup,
+  InputRightAddon,
+  Tag,
+  Text,
+} from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { AiOutlineSend } from "react-icons/ai";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 
 import { UserContext } from "../contexts/UserContext";
 import Message from "./Message";
 import UsersChange from "./UsersChange";
 import audio from "../assets/notification.mp3";
 
-const Room = ({socket}) => {
+const Room = ({ socket }) => {
   const [msgInput, setMsgInput] = useState("");
   const [online, setOnline] = useState(0);
   const [msgs, setMsgs] = useState([]);
-
+  const history = useHistory();
   const { room } = useParams();
   const { user: username } = useContext(UserContext);
- 
+
   const sendMsg = () => {
-    if (msgInput.trim()==='') return;
+    if (msgInput.trim() === "") return;
     socket.emit("message", {
       room: room,
       messageData: {
@@ -30,7 +39,14 @@ const Room = ({socket}) => {
     setMsgInput("");
   };
   useEffect(() => {
-    socket.emit("joinRoom", { room: room, username: username });
+    if (!localStorage.getItem("username")) {
+      history.push("/");
+      return window.alert("Set a username first.");
+    }
+    socket.emit("joinRoom", {
+      room: room,
+      username: localStorage.getItem("username"),
+    });
     socket.on("number", (number) => {
       setOnline(number);
     });
@@ -86,7 +102,7 @@ const Room = ({socket}) => {
           );
         })}
       </Flex>
-
+        
       <Flex position="absolute" bottom="1rem" w="96%" mx="auto">
         <InputGroup>
           <Input
@@ -100,7 +116,7 @@ const Room = ({socket}) => {
               if (e.key === "Enter") sendMsg();
             }}
           />
-          <InputRightAddon children={msgInput.length+`/400`} />{" "}
+          <InputRightAddon children={msgInput.length + `/400`} />{" "}
         </InputGroup>
         <IconButton ml="1rem" icon={<AiOutlineSend />} onClick={sendMsg} />
       </Flex>

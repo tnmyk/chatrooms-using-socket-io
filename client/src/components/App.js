@@ -7,10 +7,12 @@ import HomePage from "./HomePage";
 import Room from "./Room";
 import Join from "./Join";
 import io from "socket.io-client";
+// const socket = io.connect("https://roomchatserver.herokuapp.com/");
 const socket = io.connect("https://roomchatserver.herokuapp.com/");
 const App = () => {
   
   const [user, setUser] = useState("");
+  
   useEffect(()=>{
     const localUsername = localStorage.getItem('username');
     if (localUsername) setUser(localUsername)
