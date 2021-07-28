@@ -8,7 +8,7 @@ const Join = () => {
   const history = useHistory()
   const joinRoom = () => {
     if (roomInput.trim().length === 0)
-      return setError("Please enter a room name");
+      return setError("Please enter a room name or join public");
     if (roomInput.trim().length >20){
       return setError("Room name must be less than 20 in length");
 
