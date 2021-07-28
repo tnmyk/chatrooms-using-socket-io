@@ -25,14 +25,16 @@ const Room = ({ socket }) => {
   const history = useHistory();
   const { room } = useParams();
   const { user: username } = useContext(UserContext);
-
+  const [timeout,setTimeout] = useState(0);
   const sendMsg = () => {
-    if (msgInput.trim() === "") return;
+    if (msgInput.trim() === "" || timeout>0) return;
+    setTimeout(3);
     socket.emit("message", {
       room: room,
       messageData: {
         type: "text",
         message: msgInput,
+        // message:timeout,
         username: username,
         time: new Date().toLocaleString("en-IN"),
       },
@@ -40,6 +42,9 @@ const Room = ({ socket }) => {
     setMsgInput("");
   };
   useEffect(() => {
+    setInterval(()=>{
+      setTimeout(prev=>(prev-1));
+    },1000)
     if (!localStorage.getItem("username")) {
       history.push("/");
       return window.alert("Set a username first.");
@@ -107,7 +112,7 @@ const Room = ({ socket }) => {
         </Flex>
         <UsersContainer socket={socket} />
       </Flex>
-      <Flex position="absolute" bottom="1rem" w="83%" mx="auto">
+      <Flex px='1rem' position="absolute" bottom="1rem" w="83%" mx="auto">
         <InputGroup>
           <Input
             colorScheme="teal"
@@ -120,7 +125,7 @@ const Room = ({ socket }) => {
               if (e.key === "Enter") sendMsg();
             }}
           />
-          <InputRightAddon children={msgInput.length + `/400`} />{" "}
+          <InputRightAddon  children={timeout>0? timeout:msgInput.length + `/400`} />
         </InputGroup>
         <IconButton ml="1rem" icon={<AiOutlineSend />} onClick={sendMsg} />
       </Flex>
