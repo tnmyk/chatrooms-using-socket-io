@@ -9,12 +9,21 @@ const io = require("socket.io")(server, {
 server.listen(port);
 const users = {};
 const rooms = {};
+const usersInRoom = {};
 io.on("connection", (socket) => {
   io.emit("rooms", rooms);
   socket.on("joinRoom", ({ room, username }) => {
     socket.join(room);
+    if (!usersInRoom[room]) usersInRoom[room] = [socket.id];
+    else usersInRoom[room].push(socket.id);
 
     users[socket.id] = username;
+    io.to(room).emit(
+      "usersInRoom",
+      usersInRoom[room].map((x) => {
+        return users[x];
+      })
+    );
     if (!io.sockets.adapter.rooms.get(room)) return;
 
     const clientsInRoom = io.sockets.adapter.rooms.get(room).size;
@@ -33,18 +42,42 @@ io.on("connection", (socket) => {
   });
   socket.on("unsub", ({ room, username }) => {
     if (!io.sockets.adapter.rooms.get(room)) return;
-
-    const clientsInRoom = io.sockets.adapter.rooms.get(room).size-1;
+    usersInRoom[room] = usersInRoom[room].filter(
+      (userInRoom) => userInRoom !== socket.id
+    );
+    io.to(room).emit(
+      "usersInRoom",
+      usersInRoom[room].map((x) => {
+        return users[x];
+      })
+    );
+    const clientsInRoom = io.sockets.adapter.rooms.get(room).size - 1;
     socket.leave(room);
     rooms[room] = clientsInRoom;
     if (rooms[room] <= 0) delete rooms[room];
     io.emit("rooms", rooms);
     io.to(room).emit("number", clientsInRoom);
-    io.to(room).emit("newMessage", { type: "left", username: username });
+    io.to(room).emit("newMessage", {
+      type: "userschange",
+      action: "left",
+      username: username,
+    });
   });
   socket.on("disconnecting", () => {
     socket.rooms.forEach(async (room) => {
       const clientsInRoom = io.sockets.adapter.rooms.get(room).size - 1;
+      if (usersInRoom[room]) {
+        usersInRoom[room] = usersInRoom[room].filter(
+          (userInRoom) => userInRoom !== socket.id
+        );
+
+        io.to(room).emit(
+          "usersInRoom",
+          usersInRoom[room].map((x) => {
+            return users[x];
+          })
+        );
+      }
       io.to(room).emit("number", clientsInRoom);
       rooms[room] = clientsInRoom;
       if (rooms[room] <= 0) delete rooms[room];

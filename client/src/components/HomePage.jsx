@@ -11,8 +11,8 @@ const HomePage = () => {
   const setUsername = () => {
     if (inputUsername.trim().length >= 20 || inputUsername.trim().length === 0)
       return setError("Usernames must be between 1 to 20 in length.");
-    setUser(inputUsername);
-    localStorage.setItem("username", inputUsername);
+    setUser(inputUsername.trim());
+    localStorage.setItem("username", inputUsername.trim());
     history.push("/join");
   };
   useEffect(() => {

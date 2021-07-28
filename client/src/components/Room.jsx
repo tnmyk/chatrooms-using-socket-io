@@ -16,6 +16,7 @@ import { UserContext } from "../contexts/UserContext";
 import Message from "./Message";
 import UsersChange from "./UsersChange";
 import audio from "../assets/notification.mp3";
+import UsersContainer from "./UsersContainer";
 
 const Room = ({ socket }) => {
   const [msgInput, setMsgInput] = useState("");
@@ -76,34 +77,36 @@ const Room = ({ socket }) => {
           Online: {online}
         </Tag>
       </Flex>
-      <Flex
-        flexDir="column"
-        w="98%"
-        p="1rem"
-        mt="0.6rem"
-        backgroundColor="gray.900"
-        position="relative"
-        h="80vh"
-        overflow="auto"
-        alignItems="flex-start"
-        borderRadius="8px"
-      >
-        {msgs.map((msgData) => {
-          if (msgData.type === "userschange")
-            return <UsersChange key={Math.random()} msgData={msgData} />;
-          // return <h1 key={Math.random()}>someoneleft - {msgData.username}</h1>
-          return (
-            <Message
-              message={msgData.message}
-              username={msgData.username}
-              time={msgData.time}
-              key={Math.random()}
-            />
-          );
-        })}
+      <Flex>
+        <Flex
+          flexDir="column"
+          w="90%"
+          p="1rem"
+          mt="0.6rem"
+          backgroundColor="gray.900"
+          position="relative"
+          h="80vh"
+          overflow="auto"
+          alignItems="flex-start"
+          borderRadius="8px"
+        >
+          {msgs.map((msgData) => {
+            if (msgData.type === "userschange")
+              return <UsersChange key={Math.random()} msgData={msgData} />;
+            // return <h1 key={Math.random()}>someoneleft - {msgData.username}</h1>
+            return (
+              <Message
+                message={msgData.message}
+                username={msgData.username}
+                time={msgData.time}
+                key={Math.random()}
+              />
+            );
+          })}
+        </Flex>
+        <UsersContainer socket={socket} />
       </Flex>
-        
-      <Flex position="absolute" bottom="1rem" w="96%" mx="auto">
+      <Flex position="absolute" bottom="1rem" w="83%" mx="auto">
         <InputGroup>
           <Input
             colorScheme="teal"
