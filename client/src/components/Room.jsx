@@ -61,8 +61,8 @@ const Room = ({ socket }) => {
     // eslint-disable-next-line
   }, [room]);
   return (
-    <Box p="1rem" h="100vh" position="relative">
-      <Flex alignItems="center">
+    <Box  h="100vh" position="relative" backgroundColor='gray.900'>
+      <Flex alignItems="center" backgroundColor='black' w='100%' h='3rem' p='1rem'>
         <Text fontSize="0.9rem">Current room: </Text>{" "}
         <Text
           textTransform="capitalize"
@@ -77,18 +77,19 @@ const Room = ({ socket }) => {
           Online: {online}
         </Tag>
       </Flex>
-      <Flex>
+      
+      <Flex h='calc(100vh - 3rem)'>
         <Flex
           flexDir="column"
           w="90%"
           p="1rem"
-          mt="0.6rem"
+          // mt="0.6rem"
           backgroundColor="gray.900"
           position="relative"
           h="80vh"
           overflow="auto"
           alignItems="flex-start"
-          borderRadius="8px"
+          // borderRadius="8px"
         >
           {msgs.map((msgData) => {
             if (msgData.type === "userschange")

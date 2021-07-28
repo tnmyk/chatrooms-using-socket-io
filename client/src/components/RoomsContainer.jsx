@@ -26,6 +26,7 @@ const RoomsContainer = ({ socket }) => {
       w="10rem"
       background="gray.900"
       overflow="auto"
+    
       h="100vh"
       spacing="0.5rem"
     >

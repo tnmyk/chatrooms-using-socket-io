@@ -13,10 +13,10 @@ const UsersContainer = ({ socket }) => {
   return (
     <VStack
       w="8rem"
-      ml='1rem'
-      background="gray.900"
+      backgroundColor='gray.700'
+      // background="gray.900"
       overflow="auto"
-      h="82vh"
+      h='calc(100%)'
       spacing="0.5rem"
     >
       {" "}
