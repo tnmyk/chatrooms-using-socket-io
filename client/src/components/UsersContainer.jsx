@@ -8,7 +8,7 @@ const UsersContainer = ({ socket }) => {
       console.log(usersInRoom);
       setUsers(usersInRoom)
     });
-  }, []);
+  }, [socket]);
 
   return (
     <VStack
