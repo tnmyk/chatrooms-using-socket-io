@@ -1,7 +1,7 @@
-import { Box, Button, color, Flex, Heading, Text, VStack } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { MdPersonOutline } from "react-icons/md";
+import { Link } from "react-router-dom";
 const RoomsContainer = ({ socket }) => {
   const [roomsList, setRoomsList] = useState([]);
   useEffect(() => {

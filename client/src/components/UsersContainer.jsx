@@ -10,13 +10,6 @@ const UsersContainer = ({ socket }) => {
   }, [socket]);
 
   return (
-    // <VStack
-    //   w="12rem"
-    //   borderLeft="1px solid #282b38"
-    //   overflow="auto"
-    //   h="100%"
-    //   spacing="0.5rem"
-    // >
     <Flex
       w="12rem"
       flexDir="column"
@@ -34,11 +27,11 @@ const UsersContainer = ({ socket }) => {
         fontSize="0.83rem"
         mt="1.5rem"
       >
-        <Flex alignItems='center'>
+        <Flex alignItems="center">
           <span>Active</span>
           <span
             style={{
-              marginLeft:'0.3rem',
+              marginLeft: "0.3rem",
               display: "inline-flex",
               width: "0.5rem",
               height: "0.5rem",
@@ -63,7 +56,6 @@ const UsersContainer = ({ socket }) => {
         })}{" "}
       </Box>
     </Flex>
-    // </VStack>
   );
 };
 
