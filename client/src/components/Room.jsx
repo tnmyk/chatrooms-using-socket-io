@@ -180,6 +180,7 @@ const Room = ({ socket }) => {
             }
             onClick={() => {
               setMediaData(null);
+              inputMedia.current.value=null
             }}
           />
         ) : (
