@@ -49,7 +49,7 @@ const Room = ({ socket }) => {
   const sendMsg = () => {
     if (msgInput.trim() === "" || timeout > 0) return;
     
-    let x = 3;
+    let x = 2;
     setTimeout(x);
     const interval = setInterval(() => {
       setTimeout((prev) => prev - 0.1);
@@ -69,10 +69,6 @@ const Room = ({ socket }) => {
     setMsgInput("");
   };
 
-  // useEffect(()=>{
-  //   if(timeout<0) console.log('lol')
-  //   // clearInterval(interval)
-  // },[timeout])
 
   useEffect(() => {
     if (!localStorage.getItem("username")) {
