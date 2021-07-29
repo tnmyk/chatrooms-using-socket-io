@@ -1,4 +1,4 @@
-const Message = ({ username, time, message,image }) => {
+const Message = ({ username, time, message, image }) => {
   return (
     <div
       style={{
@@ -10,7 +10,7 @@ const Message = ({ username, time, message,image }) => {
         maxWidth: "80%",
         background: "black",
         borderRadius: "15px",
-        flexShrink:0
+        flexShrink: 0,
       }}
     >
       <h1 style={{ fontSize: "0.9rem", fontWeight: "500" }}>
@@ -26,7 +26,14 @@ const Message = ({ username, time, message,image }) => {
           {time}
         </span>
       </h1>
-      {image && <img src={image} alt="" height='20rem' style={{margin:'1rem auto'}} />}
+      {image && (
+        <img
+          src={image}
+          alt=""
+          height="20rem"
+          style={{ margin: "1rem auto" }}
+        />
+      )}
       <p style={{ margin: "0.5rem 0.2rem", fontSize: "0.9rem" }}>{message}</p>
     </div>
   );

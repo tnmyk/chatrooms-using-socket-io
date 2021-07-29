@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 
 import { useContext, useEffect, useRef, useState } from "react";
-import { AiOutlineSend, AiOutlineFile } from "react-icons/ai";
+import { AiOutlineSend, AiOutlinePicture } from "react-icons/ai";
 import { useHistory, useParams } from "react-router-dom";
 import { FiPlus } from "react-icons/fi";
 import { UserContext } from "../contexts/UserContext";
@@ -151,6 +151,7 @@ const Room = ({ socket }) => {
       <Flex px="1rem" position="absolute" bottom="1rem" w="83%" mx="auto">
         <InputGroup>
           <Input
+            placeholder="Enter text or send images..."
             colorScheme="teal"
             value={msgInput}
             maxLength="400"
@@ -169,10 +170,14 @@ const Room = ({ socket }) => {
         </InputGroup>
         {mediaData ? (
           <IconButton
-            backgroundColor='red.500'
-            _hover={{backgroundColor:'red.600'}}
+            backgroundColor="red.500"
+            _hover={{ backgroundColor: "red.600" }}
             ml="0.5rem"
-            icon={<FiPlus style={{fontSize:'1.6rem',transform:'rotateZ(45deg)'}} />}
+            icon={
+              <FiPlus
+                style={{ fontSize: "1.6rem", transform: "rotateZ(45deg)" }}
+              />
+            }
             onClick={() => {
               setMediaData(null);
             }}
@@ -181,7 +186,7 @@ const Room = ({ socket }) => {
           <IconButton
             colorScheme="blue"
             ml="0.5rem"
-            icon={<AiOutlineFile />}
+            icon={<AiOutlinePicture />}
             onClick={() => {
               inputMedia.current.click();
             }}
@@ -195,6 +200,7 @@ const Room = ({ socket }) => {
           name="media"
           id=""
           style={{ display: "none" }}
+          accept="image/*"
         />
       </Flex>
     </Box>
