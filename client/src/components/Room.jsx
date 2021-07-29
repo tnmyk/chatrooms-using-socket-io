@@ -20,7 +20,7 @@ import audio from "../assets/notification.mp3";
 import UsersContainer from "./UsersContainer";
 
 const Room = ({ socket }) => {
-  const inputMedia = useRef(null)
+  const inputMedia = useRef(null);
   const [msgInput, setMsgInput] = useState("");
   const [online, setOnline] = useState(0);
   const [msgs, setMsgs] = useState([]);
@@ -28,26 +28,34 @@ const Room = ({ socket }) => {
   const { room } = useParams();
   const { user: username } = useContext(UserContext);
   const [timeout, setTimeout] = useState(0);
-  const sendMedia = (e)=>{
+
+  const sendMedia = (e) => {
     const reader = new FileReader();
     reader.onload = function () {
       socket.emit("message", {
-      room: room,
-      messageData: {
-        type: "image",
-        message: this.result,
-        // message:timeout,
-        username: username,
-        time: new Date().toLocaleString("en-IN"),
-      },
-    });
+        room: room,
+        messageData: {
+          type: "image",
+          message: this.result,
+          // message:timeout,
+          username: username,
+          time: new Date().toLocaleString("en-IN"),
+        },
+      });
     };
     reader.readAsDataURL(inputMedia.current.files[0]);
-    
-  }
+  };
+
   const sendMsg = () => {
     if (msgInput.trim() === "" || timeout > 0) return;
-    setTimeout(3);
+    
+    let x = 3;
+    setTimeout(x);
+    const interval = setInterval(() => {
+      setTimeout((prev) => prev - 0.1);
+      x -= 0.1;
+      if (x < 0) clearInterval(interval);
+    }, 100);
     socket.emit("message", {
       room: room,
       messageData: {
@@ -60,10 +68,13 @@ const Room = ({ socket }) => {
     });
     setMsgInput("");
   };
+
+  // useEffect(()=>{
+  //   if(timeout<0) console.log('lol')
+  //   // clearInterval(interval)
+  // },[timeout])
+
   useEffect(() => {
-    setInterval(() => {
-      setTimeout((prev) => prev - 1);
-    }, 1000);
     if (!localStorage.getItem("username")) {
       history.push("/");
       return window.alert("Set a username first.");
@@ -124,10 +135,8 @@ const Room = ({ socket }) => {
           {msgs.map((msgData) => {
             if (msgData.type === "userschange")
               return <UsersChange key={Math.random()} msgData={msgData} />;
-            else if(msgData.type ==='image'){
-              
-              return <img src={msgData.message} alt=''/> ; 
-
+            else if (msgData.type === "image") {
+              return <img src={msgData.message} alt="" />;
             }
 
             // return <h1 key={Math.random()}>someoneleft - {msgData.username}</h1>
@@ -157,12 +166,26 @@ const Room = ({ socket }) => {
             }}
           />
           <InputRightAddon
-            children={timeout > 0 ? timeout : msgInput.length + `/400`}
+            children={timeout > 0 ? timeout.toFixed(2) : msgInput.length + `/400`}
           />
         </InputGroup>
-        <IconButton colorScheme="blue" ml="0.5rem" icon={<AiOutlineFile />} onClick={()=>{inputMedia.current.click()}} />
+        <IconButton
+          colorScheme="blue"
+          ml="0.5rem"
+          icon={<AiOutlineFile />}
+          onClick={() => {
+            inputMedia.current.click();
+          }}
+        />
         <IconButton ml="0.5rem" icon={<AiOutlineSend />} onClick={sendMsg} />
-        <input ref={inputMedia} onChange={sendMedia} type="file" name="media" id="" style={{display:'none'}}/>
+        <input
+          ref={inputMedia}
+          onChange={sendMedia}
+          type="file"
+          name="media"
+          id=""
+          style={{ display: "none" }}
+        />
       </Flex>
     </Box>
   );
