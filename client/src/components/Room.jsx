@@ -126,7 +126,7 @@ const Room = ({ socket }) => {
               return <UsersChange key={Math.random()} msgData={msgData} />;
             else if(msgData.type ==='image'){
               
-              return <img src={msgData.message}/> ; 
+              return <img src={msgData.message} alt=''/> ; 
 
             }
 
