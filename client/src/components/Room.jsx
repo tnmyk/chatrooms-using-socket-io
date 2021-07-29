@@ -18,8 +18,10 @@ import Message from "./Message";
 import UsersChange from "./UsersChange";
 import audio from "../assets/notification.mp3";
 import UsersContainer from "./UsersContainer";
+import Mute from "./room/Mute";
 
 const Room = ({ socket }) => {
+  const [mute, setMute] = useState(JSON.parse(localStorage.getItem("mute")));
   const inputMedia = useRef(null);
   const [msgInput, setMsgInput] = useState("");
   const [online, setOnline] = useState(0);
@@ -37,10 +39,14 @@ const Room = ({ socket }) => {
     reader.readAsDataURL(inputMedia.current.files[0]);
   };
 
+  const Noti = () => {
+    if (!mute) 
+    new Audio(audio).play().catch((err) => {});
+  };
   const sendMsg = () => {
     if ((msgInput.trim() === "" && !mediaData) || timeout > 0) return;
 
-    let x = 2;
+    let x = 1;
     setTimeout(x);
     const interval = setInterval(() => {
       setTimeout((prev) => prev - 0.1);
@@ -86,37 +92,47 @@ const Room = ({ socket }) => {
     socket.on("number", (number) => {
       setOnline(number);
     });
-    socket.on("newMessage", (newMessage) => {
-      new Audio(audio).play().catch((err) => {});
-      setMsgs((prev) => [...prev, newMessage]);
-    });
+
     return () => {
       socket.emit("unsub", { room: room, username: username });
     };
     // eslint-disable-next-line
   }, [room]);
+  useEffect(() => {
+    socket.off("newMessage");
+    socket.on("newMessage", (newMessage) => {
+      Noti();
+      setMsgs((prev) => [...prev, newMessage]);
+    });
+  }, [mute]);
   return (
     <Box h="100vh" position="relative" backgroundColor="gray.900">
       <Flex
         alignItems="center"
-        backgroundColor="black"
+        justifyContent="space-between"
+        backgroundColor="#1f212b"
+        borderBottom="1px solid #282b38"
         w="100%"
         h="3rem"
         p="1rem"
       >
-        <Text fontSize="0.9rem">Current room: </Text>{" "}
-        <Text
-          textTransform="capitalize"
-          ml="0.3rem"
-          mr="1rem"
-          fontSize="0.9rem"
-          fontWeight="medium"
-        >
-          {room}
-        </Text>
-        <Tag size="sm" variant="solid" colorScheme="teal">
-          Online: {online}
-        </Tag>
+        <div style={{ display: "flex" }}>
+          <Text fontSize="0.9rem">Current room: </Text>{" "}
+          <Text
+            textTransform="capitalize"
+            ml="0.3rem"
+            mr="1rem"
+            fontSize="0.9rem"
+            fontWeight="medium"
+          >
+            {room}
+          </Text>
+          <Tag size="sm" variant="solid" colorScheme="teal">
+            Online: {online}
+          </Tag>
+        </div>
+        {/* mute component */}
+        <Mute mute={mute} setMute={setMute} />
       </Flex>
 
       <Flex h="calc(100vh - 3rem)">
@@ -124,13 +140,11 @@ const Room = ({ socket }) => {
           flexDir="column"
           w="90%"
           p="1rem"
-          // mt="0.6rem"
           backgroundColor="gray.900"
           position="relative"
           h="80vh"
           overflow="auto"
           alignItems="flex-start"
-          // borderRadius="8px"
         >
           {msgs.map((msgData) => {
             if (msgData.type === "userschange")
@@ -180,7 +194,7 @@ const Room = ({ socket }) => {
             }
             onClick={() => {
               setMediaData(null);
-              inputMedia.current.value=null
+              inputMedia.current.value = null;
             }}
           />
         ) : (
