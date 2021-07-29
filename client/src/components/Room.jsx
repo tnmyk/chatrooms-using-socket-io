@@ -104,6 +104,7 @@ const Room = ({ socket }) => {
       Noti();
       setMsgs((prev) => [...prev, newMessage]);
     });
+    // eslint-disable-next-line
   }, [mute]);
   return (
     <Box h="100vh" position="relative" backgroundColor="gray.900">
