@@ -40,11 +40,9 @@ io.on("connection", (socket) => {
   });
 
   socket.on("message", async ({ room, messageData }) => {
-    if(messageData.type==='image'){
-      // console.log('yes')
-      //  const buffer = Buffer.from(messageData.message, "base64");
-      //  await fs.writeFile("/tmp/images", buffer).catch(console.error);
-      return io.to(room).emit('newMessage',{...messageData,['message']:messageData.message})
+    if(messageData.type==='textimage'){
+      console.log(messageData)
+      return io.to(room).emit('newMessage',messageData)
     }
 
     io.to(room).emit("newMessage", messageData);

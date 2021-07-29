@@ -12,7 +12,7 @@ import {
 import { useContext, useEffect, useRef, useState } from "react";
 import { AiOutlineSend, AiOutlineFile } from "react-icons/ai";
 import { useHistory, useParams } from "react-router-dom";
-
+import { FiPlus } from "react-icons/fi";
 import { UserContext } from "../contexts/UserContext";
 import Message from "./Message";
 import UsersChange from "./UsersChange";
@@ -28,27 +28,18 @@ const Room = ({ socket }) => {
   const { room } = useParams();
   const { user: username } = useContext(UserContext);
   const [timeout, setTimeout] = useState(0);
-
-  const sendMedia = (e) => {
+  const [mediaData, setMediaData] = useState();
+  const setMedia = () => {
     const reader = new FileReader();
     reader.onload = function () {
-      socket.emit("message", {
-        room: room,
-        messageData: {
-          type: "image",
-          message: this.result,
-          // message:timeout,
-          username: username,
-          time: new Date().toLocaleString("en-IN"),
-        },
-      });
+      setMediaData(this.result);
     };
     reader.readAsDataURL(inputMedia.current.files[0]);
   };
 
   const sendMsg = () => {
-    if (msgInput.trim() === "" || timeout > 0) return;
-    
+    if ((msgInput.trim() === "" && !mediaData) || timeout > 0) return;
+
     let x = 2;
     setTimeout(x);
     const interval = setInterval(() => {
@@ -56,19 +47,32 @@ const Room = ({ socket }) => {
       x -= 0.1;
       if (x < 0) clearInterval(interval);
     }, 100);
-    socket.emit("message", {
-      room: room,
-      messageData: {
-        type: "text",
-        message: msgInput,
-        // message:timeout,
-        username: username,
-        time: new Date().toLocaleString("en-IN"),
-      },
-    });
+    if (!mediaData) {
+      socket.emit("message", {
+        room: room,
+        messageData: {
+          type: "text",
+          message: msgInput,
+          // message:timeout,
+          username: username,
+          time: new Date().toLocaleString("en-IN"),
+        },
+      });
+    } else {
+      socket.emit("message", {
+        room: room,
+        messageData: {
+          type: "textimage",
+          message: msgInput,
+          image: mediaData,
+          username: username,
+          time: new Date().toLocaleString("en-IN"),
+        },
+      });
+    }
+    setMediaData(null);
     setMsgInput("");
   };
-
 
   useEffect(() => {
     if (!localStorage.getItem("username")) {
@@ -131,17 +135,13 @@ const Room = ({ socket }) => {
           {msgs.map((msgData) => {
             if (msgData.type === "userschange")
               return <UsersChange key={Math.random()} msgData={msgData} />;
-            else if (msgData.type === "image") {
-              return <img src={msgData.message} alt="" />;
-            }
-
-            // return <h1 key={Math.random()}>someoneleft - {msgData.username}</h1>
             return (
               <Message
                 message={msgData.message}
                 username={msgData.username}
                 time={msgData.time}
                 key={Math.random()}
+                image={msgData.image}
               />
             );
           })}
@@ -162,21 +162,35 @@ const Room = ({ socket }) => {
             }}
           />
           <InputRightAddon
-            children={timeout > 0 ? timeout.toFixed(2) : msgInput.length + `/400`}
+            children={
+              timeout > 0 ? timeout.toFixed(2) : msgInput.length + `/400`
+            }
           />
         </InputGroup>
-        <IconButton
-          colorScheme="blue"
-          ml="0.5rem"
-          icon={<AiOutlineFile />}
-          onClick={() => {
-            inputMedia.current.click();
-          }}
-        />
+        {mediaData ? (
+          <IconButton
+            backgroundColor='red.500'
+            _hover={{backgroundColor:'red.600'}}
+            ml="0.5rem"
+            icon={<FiPlus style={{fontSize:'1.6rem',transform:'rotateZ(45deg)'}} />}
+            onClick={() => {
+              setMediaData(null);
+            }}
+          />
+        ) : (
+          <IconButton
+            colorScheme="blue"
+            ml="0.5rem"
+            icon={<AiOutlineFile />}
+            onClick={() => {
+              inputMedia.current.click();
+            }}
+          />
+        )}
         <IconButton ml="0.5rem" icon={<AiOutlineSend />} onClick={sendMsg} />
         <input
           ref={inputMedia}
-          onChange={sendMedia}
+          onChange={setMedia}
           type="file"
           name="media"
           id=""

@@ -1,4 +1,4 @@
-const Message = ({ username, time, message }) => {
+const Message = ({ username, time, message,image }) => {
   return (
     <div
       style={{
@@ -26,6 +26,7 @@ const Message = ({ username, time, message }) => {
           {time}
         </span>
       </h1>
+      {image && <img src={image} alt="" height='20rem' style={{margin:'1rem auto'}} />}
       <p style={{ margin: "0.5rem 0.2rem", fontSize: "0.9rem" }}>{message}</p>
     </div>
   );
