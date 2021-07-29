@@ -8,8 +8,9 @@ import {
   Tag,
   Text,
 } from "@chakra-ui/react";
-import { useContext, useEffect, useState } from "react";
-import { AiOutlineSend } from "react-icons/ai";
+
+import { useContext, useEffect, useRef, useState } from "react";
+import { AiOutlineSend, AiOutlineFile } from "react-icons/ai";
 import { useHistory, useParams } from "react-router-dom";
 
 import { UserContext } from "../contexts/UserContext";
@@ -19,15 +20,33 @@ import audio from "../assets/notification.mp3";
 import UsersContainer from "./UsersContainer";
 
 const Room = ({ socket }) => {
+  const inputMedia = useRef(null)
   const [msgInput, setMsgInput] = useState("");
   const [online, setOnline] = useState(0);
   const [msgs, setMsgs] = useState([]);
   const history = useHistory();
   const { room } = useParams();
   const { user: username } = useContext(UserContext);
-  const [timeout,setTimeout] = useState(0);
+  const [timeout, setTimeout] = useState(0);
+  const sendMedia = (e)=>{
+    const reader = new FileReader();
+    reader.onload = function () {
+      socket.emit("message", {
+      room: room,
+      messageData: {
+        type: "image",
+        message: this.result,
+        // message:timeout,
+        username: username,
+        time: new Date().toLocaleString("en-IN"),
+      },
+    });
+    };
+    reader.readAsDataURL(inputMedia.current.files[0]);
+    
+  }
   const sendMsg = () => {
-    if (msgInput.trim() === "" || timeout>0) return;
+    if (msgInput.trim() === "" || timeout > 0) return;
     setTimeout(3);
     socket.emit("message", {
       room: room,
@@ -42,9 +61,9 @@ const Room = ({ socket }) => {
     setMsgInput("");
   };
   useEffect(() => {
-    setInterval(()=>{
-      setTimeout(prev=>(prev-1));
-    },1000)
+    setInterval(() => {
+      setTimeout((prev) => prev - 1);
+    }, 1000);
     if (!localStorage.getItem("username")) {
       history.push("/");
       return window.alert("Set a username first.");
@@ -66,8 +85,14 @@ const Room = ({ socket }) => {
     // eslint-disable-next-line
   }, [room]);
   return (
-    <Box  h="100vh" position="relative" backgroundColor='gray.900'>
-      <Flex alignItems="center" backgroundColor='black' w='100%' h='3rem' p='1rem'>
+    <Box h="100vh" position="relative" backgroundColor="gray.900">
+      <Flex
+        alignItems="center"
+        backgroundColor="black"
+        w="100%"
+        h="3rem"
+        p="1rem"
+      >
         <Text fontSize="0.9rem">Current room: </Text>{" "}
         <Text
           textTransform="capitalize"
@@ -82,8 +107,8 @@ const Room = ({ socket }) => {
           Online: {online}
         </Tag>
       </Flex>
-      
-      <Flex h='calc(100vh - 3rem)'>
+
+      <Flex h="calc(100vh - 3rem)">
         <Flex
           flexDir="column"
           w="90%"
@@ -99,6 +124,12 @@ const Room = ({ socket }) => {
           {msgs.map((msgData) => {
             if (msgData.type === "userschange")
               return <UsersChange key={Math.random()} msgData={msgData} />;
+            else if(msgData.type ==='image'){
+              
+              return <img src={msgData.message}/> ; 
+
+            }
+
             // return <h1 key={Math.random()}>someoneleft - {msgData.username}</h1>
             return (
               <Message
@@ -112,7 +143,7 @@ const Room = ({ socket }) => {
         </Flex>
         <UsersContainer socket={socket} />
       </Flex>
-      <Flex px='1rem' position="absolute" bottom="1rem" w="83%" mx="auto">
+      <Flex px="1rem" position="absolute" bottom="1rem" w="83%" mx="auto">
         <InputGroup>
           <Input
             colorScheme="teal"
@@ -125,9 +156,13 @@ const Room = ({ socket }) => {
               if (e.key === "Enter") sendMsg();
             }}
           />
-          <InputRightAddon  children={timeout>0? timeout:msgInput.length + `/400`} />
+          <InputRightAddon
+            children={timeout > 0 ? timeout : msgInput.length + `/400`}
+          />
         </InputGroup>
-        <IconButton ml="1rem" icon={<AiOutlineSend />} onClick={sendMsg} />
+        <IconButton colorScheme="blue" ml="0.5rem" icon={<AiOutlineFile />} onClick={()=>{inputMedia.current.click()}} />
+        <IconButton ml="0.5rem" icon={<AiOutlineSend />} onClick={sendMsg} />
+        <input ref={inputMedia} onChange={sendMedia} type="file" name="media" id="" style={{display:'none'}}/>
       </Flex>
     </Box>
   );

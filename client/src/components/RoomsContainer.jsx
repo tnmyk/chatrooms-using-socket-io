@@ -67,12 +67,12 @@ const RoomsContainer = ({ socket }) => {
         )}
         {roomsList.map((room) => {
           return (
-            <Link to={'/rooms/'+room.name}>
+            <Link to={'/rooms/'+room.name} key={Math.random()}>
               <Flex
                 mt="1rem"
                 justifyContent="space-between"
                 alignItems="center"
-                key={Math.random()}
+                
               >
                 <Box
                   style={{

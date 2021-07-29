@@ -1,6 +1,8 @@
+const fs = require('fs')
 const app = require("express")();
 const server = require("http").createServer(app);
 const port = process.env.PORT || 8000;
+
 const io = require("socket.io")(server, {
   cors: {
     origin: "*",
@@ -37,7 +39,14 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("message", ({ room, messageData }) => {
+  socket.on("message", async ({ room, messageData }) => {
+    if(messageData.type==='image'){
+      // console.log('yes')
+      //  const buffer = Buffer.from(messageData.message, "base64");
+      //  await fs.writeFile("/tmp/images", buffer).catch(console.error);
+      return io.to(room).emit('newMessage',{...messageData,['message']:messageData.message})
+    }
+
     io.to(room).emit("newMessage", messageData);
   });
   socket.on("unsub", ({ room, username }) => {
